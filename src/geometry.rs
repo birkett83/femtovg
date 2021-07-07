@@ -7,6 +7,13 @@ use std::ops::{
     IndexMut,
 };
 
+use euclid::{
+    Point2D,
+    UnknownUnit,
+};
+
+pub type Point = Point2D<f32, UnknownUnit>;
+
 use fnv::FnvHasher;
 
 pub fn quantize(a: f32, d: f32) -> f32 {
