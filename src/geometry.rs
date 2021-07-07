@@ -27,11 +27,11 @@ pub fn pt_equals(x1: f32, y1: f32, x2: f32, y2: f32, tol: f32) -> bool {
     dx * dx + dy * dy < tol * tol
 }
 
-pub fn dist_pt_segment(x: f32, y: f32, px: f32, py: f32, qx: f32, qy: f32) -> f32 {
-    let pqx = qx - px;
-    let pqy = qy - py;
-    let dx = x - px;
-    let dy = y - py;
+pub fn dist_pt_segment(r: Point, p: Point, q: Point) -> f32 {
+    let pqx = q.x - p.x;
+    let pqy = q.y - p.y;
+    let dx = r.x - p.x;
+    let dy = r.y - p.y;
     let d = pqx * pqx + pqy * pqy;
     let mut t = pqx * dx + pqy * dy;
 
@@ -45,8 +45,8 @@ pub fn dist_pt_segment(x: f32, y: f32, px: f32, py: f32, qx: f32, qy: f32) -> f3
         t = 1.0;
     }
 
-    let dx = px + t * pqx - x;
-    let dy = py + t * pqy - y;
+    let dx = p.x + t * pqx - r.x;
+    let dy = p.y + t * pqy - r.y;
 
     dx * dx + dy * dy
 }

@@ -266,7 +266,7 @@ impl Path {
         // Handle degenerate cases.
         if geometry::pt_equals(p0.x, p0.y, p1.x, p1.y, self.dist_tol)
             || geometry::pt_equals(p1.x, p1.y, p2.x, p2.y, self.dist_tol)
-            || geometry::dist_pt_segment(p1.x, p1.y, p0.x, p0.y, p2.x, p2.y) < self.dist_tol * self.dist_tol
+            || geometry::dist_pt_segment(p1, p0, p2) < self.dist_tol * self.dist_tol
             || radius < self.dist_tol
         {
             self.line_to(p1.x, p1.y);
