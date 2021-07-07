@@ -156,6 +156,31 @@ fn path_contains_point() {
 }
 
 #[test]
+fn arc_to_contains_point() {
+    let mut canvas = Canvas::new(Void).unwrap();
+    // without setting size contains_point will early out on the bounds check and report false
+    canvas.set_size(200, 200, 1.0);
+
+    // create a quarter-circle arc
+    let mut path = Path::new();
+    path.move_to(100.0, 100.0);
+    path.line_to(200.0, 100.0);
+    path.arc_to(point2(200.0, 200.0), point2(100.0, 200.0), 100.0);
+    path.line_to(100.0, 200.0);
+
+    // Check points in each octant. The first two should be inside the quarter
+    // circle, the rest should be outside
+    assert!(canvas.contains_point(&mut path, 120.0, 110.0, FillRule::NonZero));
+    assert!(canvas.contains_point(&mut path, 110.0, 120.0, FillRule::NonZero));
+    assert!(!canvas.contains_point(&mut path, 90.0, 120.0, FillRule::NonZero));
+    assert!(!canvas.contains_point(&mut path, 80.0, 110.0, FillRule::NonZero));
+    assert!(!canvas.contains_point(&mut path, 80.0, 90.0, FillRule::NonZero));
+    assert!(!canvas.contains_point(&mut path, 90.0, 80.0, FillRule::NonZero));
+    assert!(!canvas.contains_point(&mut path, 110.0, 800.0, FillRule::NonZero));
+    assert!(!canvas.contains_point(&mut path, 120.0, 90.0, FillRule::NonZero));
+}
+
+#[test]
 fn text_location_respects_scale() {
     let mut canvas = Canvas::new(Void).unwrap();
 
