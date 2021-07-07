@@ -287,7 +287,7 @@ impl Path {
 
         let (cx, cy, a0, a1, dir);
 
-        if geometry::cross(dp0.x, dp0.y, dp1.x, dp1.y) > 0.0 {
+        if dp0.cross(dp1) < 0.0 {
             cx = p1.x + dp0.x * d + dp0.y * radius;
             cy = p1.y + dp0.y * d + -dp0.x * radius;
             a0 = dp0.x.atan2(-dp0.y);

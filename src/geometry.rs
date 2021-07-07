@@ -27,10 +27,6 @@ pub fn pt_equals(x1: f32, y1: f32, x2: f32, y2: f32, tol: f32) -> bool {
     dx * dx + dy * dy < tol * tol
 }
 
-pub fn cross(dx0: f32, dy0: f32, dx1: f32, dy1: f32) -> f32 {
-    dx1 * dy0 - dx0 * dy1
-}
-
 pub fn dist_pt_segment(x: f32, y: f32, px: f32, py: f32, qx: f32, qy: f32) -> f32 {
     let pqx = qx - px;
     let pqy = qy - py;
