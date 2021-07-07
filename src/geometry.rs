@@ -248,3 +248,21 @@ impl Default for Bounds {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use euclid::approxeq::ApproxEq;
+    use euclid::point2;
+
+    #[test]
+    fn test_dist_pt_segment() {
+        // A handy-dandy 345 triangle
+        assert!(dist_pt_segment(point2(-1.0, 0.0), point2(0.0, 0.0), point2(20.0, 15.0)).approx_eq(&1.0));
+        assert!(dist_pt_segment(point2(20.0, 0.0), point2(0.0, 0.0), point2(20.0, 15.0)).approx_eq(&144.0));
+        assert!(dist_pt_segment(point2(40.0, 15.0), point2(0.0, 0.0), point2(20.0, 15.0)).approx_eq(&400.0));
+        assert!(dist_pt_segment(point2(23.0, 19.0), point2(0.0, 0.0), point2(20.0, 15.0)).approx_eq(&25.0));
+        // the degenerate case
+        assert!(dist_pt_segment(point2(1.0, 0.0), point2(0.0, 0.0), point2(0.0, 0.0)).approx_eq(&1.0));
+    }
+}
