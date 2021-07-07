@@ -13,6 +13,9 @@ pub use cache::{
     PathCache,
 };
 
+use euclid::approxeq::ApproxEq;
+use euclid::point2;
+
 // Length proportional to radius of a cubic bezier handle for 90deg arcs.
 const KAPPA90: f32 = 0.5522847493;
 
@@ -84,6 +87,7 @@ pub struct Path {
     coords: Vec<f32>,
     last: Point,
     dist_tol: f32,
+    point_tol: Point,
     #[cfg_attr(feature = "serde", serde(skip))]
     pub(crate) cache: Option<(u64, PathCache)>,
 }
@@ -92,6 +96,7 @@ impl Path {
     pub fn new() -> Self {
         Self {
             dist_tol: 0.01,
+            point_tol: point2(0.01, 0.01),
             ..Default::default()
         }
     }
@@ -107,6 +112,7 @@ impl Path {
 
     pub fn set_distance_tolerance(&mut self, value: f32) {
         self.dist_tol = value;
+        self.point_tol = point2(value, value);
     }
 
     pub fn verbs(&self) -> PathIter<'_> {
@@ -264,8 +270,8 @@ impl Path {
         let p0 = self.last;
 
         // Handle degenerate cases.
-        if geometry::pt_equals(p0.x, p0.y, p1.x, p1.y, self.dist_tol)
-            || geometry::pt_equals(p1.x, p1.y, p2.x, p2.y, self.dist_tol)
+        if p0.approx_eq_eps(&p1, &self.point_tol)
+            || p1.approx_eq_eps(&p2, &self.point_tol)
             || geometry::dist_pt_segment(p1, p0, p2) < self.dist_tol * self.dist_tol
             || radius < self.dist_tol
         {

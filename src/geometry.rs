@@ -20,13 +20,6 @@ pub fn quantize(a: f32, d: f32) -> f32 {
     (a / d + 0.5).trunc() * d
 }
 
-pub fn pt_equals(x1: f32, y1: f32, x2: f32, y2: f32, tol: f32) -> bool {
-    let dx = x2 - x1;
-    let dy = y2 - y1;
-
-    dx * dx + dy * dy < tol * tol
-}
-
 /// Computes the squared-distance from point r to line segment pq
 pub fn dist_pt_segment(r: Point, p: Point, q: Point) -> f32 {
     let pq = q - p;
