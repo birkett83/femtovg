@@ -272,13 +272,11 @@ impl Path {
             self.line_to(p1.x, p1.y);
         }
 
-        let mut dp0 = p0 - p1;
-        let mut dp1 = p2 - p1;
+        let dp0 = (p0 - p1).normalize();
+        let dp1 = (p2 - p1).normalize();
 
-        geometry::normalize(&mut dp0.x, &mut dp0.y);
-        geometry::normalize(&mut dp1.x, &mut dp1.y);
-
-        let a = (dp0.x * dp1.x + dp0.y * dp1.y).acos();
+        // Angle between unit vectors
+        let a = dp0.dot(dp1).acos();
         let d = radius / (a / 2.0).tan();
 
         if d > 10000.0 {
