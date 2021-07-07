@@ -9,6 +9,8 @@ use femtovg::{
     Solidity,
 };
 
+use euclid::point2;
+
 #[test]
 fn path_with_single_move_to() {
     let mut canvas = Canvas::new(Void).unwrap();
@@ -112,7 +114,7 @@ fn degenerate_arc_to() {
 
     let mut path = Path::new();
     path.move_to(10.0, 10.0);
-    path.arc_to(10.0, 10.0001, 10.0, 10.0001, 2.0);
+    path.arc_to(point2(10.0, 10.0001), point2(10.0, 10.0001), 2.0);
     canvas.fill_path(&mut path, Paint::color(Color::rgb(100, 100, 100)));
     canvas.stroke_path(&mut path, Paint::color(Color::rgb(100, 100, 100)));
 }

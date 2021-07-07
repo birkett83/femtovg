@@ -256,51 +256,48 @@ impl Path {
     }
 
     /// Adds an arc segment at the corner defined by the last path point, and two specified points.
-    pub fn arc_to(&mut self, x1: f32, y1: f32, x2: f32, y2: f32, radius: f32) {
+    pub fn arc_to(&mut self, p1: Point, p2: Point, radius: f32) {
         if self.verbs.is_empty() {
             return;
         }
 
-        let x0 = self.last.x;
-        let y0 = self.last.y;
+        let p0 = self.last;
 
         // Handle degenerate cases.
-        if geometry::pt_equals(x0, y0, x1, y1, self.dist_tol)
-            || geometry::pt_equals(x1, y1, x2, y2, self.dist_tol)
-            || geometry::dist_pt_segment(x1, y1, x0, y0, x2, y2) < self.dist_tol * self.dist_tol
+        if geometry::pt_equals(p0.x, p0.y, p1.x, p1.y, self.dist_tol)
+            || geometry::pt_equals(p1.x, p1.y, p2.x, p2.y, self.dist_tol)
+            || geometry::dist_pt_segment(p1.x, p1.y, p0.x, p0.y, p2.x, p2.y) < self.dist_tol * self.dist_tol
             || radius < self.dist_tol
         {
-            self.line_to(x1, y1);
+            self.line_to(p1.x, p1.y);
         }
 
-        let mut dx0 = x0 - x1;
-        let mut dy0 = y0 - y1;
-        let mut dx1 = x2 - x1;
-        let mut dy1 = y2 - y1;
+        let mut dp0 = p0 - p1;
+        let mut dp1 = p2 - p1;
 
-        geometry::normalize(&mut dx0, &mut dy0);
-        geometry::normalize(&mut dx1, &mut dy1);
+        geometry::normalize(&mut dp0.x, &mut dp0.y);
+        geometry::normalize(&mut dp1.x, &mut dp1.y);
 
-        let a = (dx0 * dx1 + dy0 * dy1).acos();
+        let a = (dp0.x * dp1.x + dp0.y * dp1.y).acos();
         let d = radius / (a / 2.0).tan();
 
         if d > 10000.0 {
-            return self.line_to(x1, y1);
+            return self.line_to(p1.x, p1.y);
         }
 
         let (cx, cy, a0, a1, dir);
 
-        if geometry::cross(dx0, dy0, dx1, dy1) > 0.0 {
-            cx = x1 + dx0 * d + dy0 * radius;
-            cy = y1 + dy0 * d + -dx0 * radius;
-            a0 = dx0.atan2(-dy0);
-            a1 = -dx1.atan2(dy1);
+        if geometry::cross(dp0.x, dp0.y, dp1.x, dp1.y) > 0.0 {
+            cx = p1.x + dp0.x * d + dp0.y * radius;
+            cy = p1.y + dp0.y * d + -dp0.x * radius;
+            a0 = dp0.x.atan2(-dp0.y);
+            a1 = -dp1.x.atan2(dp1.y);
             dir = Solidity::Hole;
         } else {
-            cx = x1 + dx0 * d + -dy0 * radius;
-            cy = y1 + dy0 * d + dx0 * radius;
-            a0 = -dx0.atan2(dy0);
-            a1 = dx1.atan2(-dy1);
+            cx = p1.x + dp0.x * d + -dp0.y * radius;
+            cy = p1.y + dp0.y * d + dp0.x * radius;
+            a0 = -dp0.x.atan2(dp0.y);
+            a1 = dp1.x.atan2(-dp1.y);
             dir = Solidity::Solid;
         }
 
