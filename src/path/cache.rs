@@ -5,7 +5,6 @@ use std::ops::Range;
 use bitflags::bitflags;
 
 use crate::geometry::{
-    self,
     Bounds,
     Transform2D,
 };
@@ -266,7 +265,14 @@ impl PathCache {
 
                 p0.dx = p1.x - p0.x;
                 p0.dy = p1.y - p0.y;
-                p0.len = geometry::normalize(&mut p0.dx, &mut p0.dy);
+                p0.len = ((p0.dx * p0.dx) + (p0.dy * p0.dy)).sqrt();
+
+                // Normalize (p0.dx, p0,dy)
+                if p0.len > 1e-6 {
+                    let il = 1.0 / p0.len;
+                    p0.dx *= il;
+                    p0.dy *= il;
+                }
 
                 bounds.minx = bounds.minx.min(p0.x);
                 bounds.miny = bounds.miny.min(p0.y);
