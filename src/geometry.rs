@@ -27,14 +27,14 @@ pub fn pt_equals(x1: f32, y1: f32, x2: f32, y2: f32, tol: f32) -> bool {
     dx * dx + dy * dy < tol * tol
 }
 
+/// Computes the squared-distance from point r to line segment pq
 pub fn dist_pt_segment(r: Point, p: Point, q: Point) -> f32 {
-    let pqx = q.x - p.x;
-    let pqy = q.y - p.y;
-    let dx = r.x - p.x;
-    let dy = r.y - p.y;
-    let d = pqx * pqx + pqy * pqy;
-    let mut t = pqx * dx + pqy * dy;
+    let pq = q - p;
+    let pr = r - p;
 
+    let mut t = pq.dot(pr);
+
+    let d = pq.square_length();
     if d > 0.0 {
         t /= d;
     }
@@ -45,10 +45,8 @@ pub fn dist_pt_segment(r: Point, p: Point, q: Point) -> f32 {
         t = 1.0;
     }
 
-    let dx = p.x + t * pqx - r.x;
-    let dy = p.y + t * pqy - r.y;
-
-    dx * dx + dy * dy
+    let v = p.lerp(pq.to_point(), t) - r;
+    v.square_length()
 }
 
 /// 2×3 matrix (2 rows, 3 columns) used for 2D linear transformations. It can represent transformations such as translation, rotation, or scaling.
